@@ -1,0 +1,70 @@
+npm i --save axios lodash redux react-redux redux-form redux-promise react-router-dom
+> 참고로 router v4 는 react-router-dom 사용
+> router v4 동영상 강의 : https://velopert.com/3275
+
+
+react-scripts'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는 배치 파일이 아닙니다.
+=> npm start 할때 나는 오류.
+=> npm update 해주고 다시 시도.
+
+
+
+
+######################################################################################
+npm i --save-dev webpack webpack-cli
+
+package.json 에서 "scripts": {  "build": "webpack --mode production"  ...  }
+
+
+npm i --save-dev babel-loader babel-core babel-preset-env babel-preset-react
+
+루트에 .babelrc 만들어서
+{
+   "presets": ["env", "react" ]
+}
+
+루트에 webpack.config.js 만들어서
+module.exports = {
+   entry: ['./src/index.js'],
+   performance: {hints: false},
+   mode: 'production',
+   output: {
+      path: __dirname,
+      publicPath: '/',
+      filename: 'bundle.js'
+   },
+   module: {
+      rules: [
+         {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+               loader: "babel-loader"
+            }
+         }
+      ]
+   },
+   resolve: {
+      extensions: ['.js', '.jsx']
+   },
+   devServer: {
+      historyApiFallback: true,
+      contentBase: './',
+      watchOptions: {
+         aggregateTimeout: 300,
+         poll: 1000
+      }
+   }
+};
+
+packge.json 에서
+   "scripts": {
+      "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+      ~~~
+   }
+
+index.html 에서 </body> 와 </html> 사이에
+<script src="/bundle.js"></script>
+
+[참고사이트] react + webpack + babel : https://www.valentinog.com/blog/react-webpack-babel/
+######################################################################################
