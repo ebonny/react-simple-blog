@@ -8,8 +8,26 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import PostList from './components/post_list';
 import PostAdd from './components/post_add';
 import PostView from './components/post_view';
+import $ from 'jquery';
 
 const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
+
+$(document).ready(() => {
+   $(":input[matching!='']").each(function (i, input) {
+      let type = $(input).attr("matching");
+      if (type) {
+         switch (type) {
+            case 'numOnly':
+               $(input).on("input", function() {
+                  $(this).val($(this).val().replace(/[^0-9]/g,'').replace(/^0.+/g, ''));
+               });
+               break;
+            default:
+               console.log("no matched function exists : ", type);
+         }
+      }
+   });
+});
 
 ReactDOM.render(
       <Provider store={createStoreWithMiddleware(reducers)}>

@@ -3,26 +3,34 @@ import {reduxForm, Field} from 'redux-form';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {createPost} from "../actions";
+import {pack} from '../globals';
+
+const {required, email} = pack.options.validate;
 
 class PostAdd extends Component {
 
    onSubmit(props) {
       this.props.createPost(props, () => {
-         this.props.history.push('/');    /* submit 후 이동할 url 지정 */
+         this.props.history.push('/');
+         /* submit 후 이동할 url 지정 */
       });
    }
 
    renderField(field) {
-      const {meta: {touched, error}} = field;
-      // const touched = field.meta.touched;
-      const clsName = `form-group ${touched && error ? 'has-danger' : '' }`;
+      const { input, label, type, matching, meta: { touched, error, warning } } = field;
+      const clsName = `form-group ${touched && (error && 'has-danger') || (warning && 'has-warning') }`;
+
       return (
             <div className={clsName}>
-               <label>{field.label}</label>
-               <input type="text" {...field.input}
-                      className="form-control"
-               />
-               {touched ? error : ''}
+               <label>{label}</label>
+               {
+                  type == 'input' &&
+                  <input type="text" {...input} className="form-control" matching={matching} />
+                  ||
+                  type == 'textarea' &&
+                  <textarea {...input} className="form-control" matching={matching}></textarea>
+               }
+               {touched ? error || warning : ''}
             </div>
       );
    }
@@ -36,17 +44,24 @@ class PostAdd extends Component {
                <Field
                      label="Title"
                      name="title"
+                     type="input"
                      component={this.renderField}
+                     validate={[required]}
+                     matching="numOnly"
                />
                <Field
                      label="Categoried"
                      name="categories"
+                     type="input"
                      component={this.renderField}
                />
                <Field
                      label="Content"
                      name="content"
+                     type="textarea"
                      component={this.renderField}
+                     validate={[required]}
+                     warn={email}
                />
 
                {
@@ -96,10 +111,10 @@ function validate(values) {
 
 export default reduxForm({
    /* ▼ 리덕스폼으로 전달하는 문자열이 여기에 위치 */
-   form: 'PostAddForm', // 유니크한 이름이면 된다. 딱히 이름을 사용할 곳은 없다.
-   validate    // validate: validate 의 EA6 생략구문
+   form: 'PostAddForm' // 유니크한 이름이면 된다. 딱히 이름을 사용할 곳은 없다.
+   //validate    // validate: validate 의 EA6 생략구문
 })(
-   connect(null, {createPost})(PostAdd)
+      connect(null, {createPost})(PostAdd)
 );
 
 // 세번째 { createPost } 는
